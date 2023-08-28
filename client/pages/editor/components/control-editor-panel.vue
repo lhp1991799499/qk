@@ -65,8 +65,8 @@ export default {
       } else if (type === 'reset') {
         this.scaleVal = value || 1;
       }
-      console.log(this.scaleVal);
       this.$emit('onScaleSize', this.scaleVal);
+      this.$store.commit('transformScalce', this.scaleVal);
     }
   }
 };

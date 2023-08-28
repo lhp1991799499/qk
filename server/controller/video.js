@@ -1,21 +1,21 @@
 const path = require('path');
 const fs = require('fs-extra');
-const shortid = require('js-shortid');
-const ffmpegPath = require('@ffmpeg-installer/ffmpeg').path;
-const ffprobePath = require('@ffprobe-installer/ffprobe').path;
-const { FFCreatorCenter } = require('ffcreator');
+const shortid = require('js-shortid');  // 生成一个id
+const ffmpegPath = require('@ffmpeg-installer/ffmpeg').path;     // 路径 ffmpeg
+const ffprobePath = require('@ffprobe-installer/ffprobe').path;  // ffprobe 路径
+const { FFCreatorCenter } = require('ffcreator');                // 动画库
 
 // 设置 FFmpeg 相关路径
-FFCreatorCenter.setFFmpegPath(ffmpegPath);
+FFCreatorCenter.setFFmpegPath(ffmpegPath);        // 设置路径
 FFCreatorCenter.setFFprobePath(ffprobePath);
 
 module.exports = (app) => ({
   async making() {
     const { ctx, $service, $helper } = app;
-    const uuid = shortid.gen() + new Date().valueOf();
-    const folderId = ctx.request.body.folderId;
-    const videoData = ctx.request.body.videoData;
-    const { id } = ctx.request.body;
+    const uuid = shortid.gen() + new Date().valueOf();  // 生成一个id
+    const folderId = ctx.request.body.folderId;        //  获取后台传递过来的id
+    const videoData = ctx.request.body.videoData;      // 获取前端传递的 data
+    const { id } = ctx.request.body;   //获取body 传递过来 id
 
     const taskId = FFCreatorCenter.addTask(
       $service.video.createFFTask.bind(this, { videoData, uuid, folderId }, id)
@@ -32,6 +32,7 @@ module.exports = (app) => ({
     let progress, state, file;
     // 重要: 是否是单server, 如果多机则读db
     const standAlone = true;
+
     if (standAlone) {
       progress = FFCreatorCenter.getProgress(taskId);
       state = FFCreatorCenter.getTaskState(taskId);
@@ -44,7 +45,9 @@ module.exports = (app) => ({
     }
 
     let videoUrl = file + '';
+
     videoUrl = videoUrl.replace(publicpath, '');
+
     $helper.returnBody(true, {
       message: 'ok',
       taskId,

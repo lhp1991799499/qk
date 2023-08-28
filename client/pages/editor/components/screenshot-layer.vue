@@ -58,7 +58,8 @@ export default {
     ..._qk_register_components_object
   },
   computed: {
-    ...mapState({ projectData: (state) => state.editor.projectData })
+    ...mapState({ projectData: (state) => state.editor.projectData }),
+    ...mapGetters(['activePage'])
   },
   created() {
     this.user = JSON.parse(localStorage.getItem('user'));
@@ -80,14 +81,19 @@ export default {
   methods: {
     publishFun() {
       this.reset();
+      //预览时传入当前编辑的页面
+      const data = {
+        ...this.projectData
+      };
+      data.pages = cloneDeep([this.activePage]);
       // 删掉音乐元素,并且按照z-index重新排序
-      this.pagesData = editorProjectConfig.processingProjectData(
-        this.projectData
-      );
-      this.videoData = editorProjectConfig.cloneToVideoData(this.projectData);
+      this.pagesData = editorProjectConfig.processingProjectData(data);
+      this.videoData = editorProjectConfig.cloneToVideoData(data);
       this.$nextTick(async () => {
         this.folderId = shortid.gen();
-        const domIdsArr = this.groupingPagesData(this.pagesData);
+        const domIdsArr = this.groupingPagesData(data);
+        // console.log(this.videoData, 'LLLLLLLLLLLLLLLLLLLLLLLLLLLL');
+        // return
         const noAniDomArr = this.rearrangeDom(domIdsArr);
         const result = await this.screenshotAndUpload(noAniDomArr);
         const videoData = this.updateVideoData(result);

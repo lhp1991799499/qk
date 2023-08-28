@@ -78,24 +78,28 @@
       </el-popover>
       <div v-if="animation.title" class="edit-animation-box">
         <div>
-          <div class="delay">动画时长</div>
+          <div class="delay">动画延迟</div>
           <el-slider
             v-model="animation.delay"
             @change="delayChange"
             show-input
             input-size="mini"
-            :max="5"
+            :max="30"
+            :min="0"
+            :step="0.1"
           >
           </el-slider>
         </div>
         <div>
-          <div class="duration">动画延时</div>
+          <div class="duration">动画时长</div>
           <el-slider
             v-model="animation.duration"
             show-input
             input-size="mini"
             @change="delayChange"
-            :max="5"
+            :max="30"
+            :min="0"
+            :step="0.1"
           >
           </el-slider>
         </div>
@@ -122,19 +126,13 @@ export default {
   computed: {
     ...mapGetters(['activeElement'])
   },
-  watch: {
-    activeElement: {
-      handler(activeElement) {
-        console.log(1111);
-      }
-    },
-    deep: true
-  },
+
   data() {
     return {
       popoverVisible: false,
       hoverPreviewAnimate: '',
-      reSelectAnimateIndex: undefined
+      reSelectAnimateIndex: undefined,
+      timer: null
       // animation: {
       //   delay: 0,
       //   duration: 0,
@@ -148,6 +146,7 @@ export default {
   methods: {
     previewAnimation() {
       const animationData = [this.animation];
+      this.$bus.$emit('imageAnimations', 666);
       $bus.$emit(
         'RUN_ANIMATIONS',
         this.activeElement.uuid,
@@ -185,6 +184,13 @@ export default {
     },
     delayChange(e, type) {
       this.animation[type] = e;
+      if (this.timer) {
+        clearTimeout(this.timer);
+        this.timer = null;
+      }
+      this.timer = setTimeout(() => {
+        this.$store.dispatch('addHistoryCache');
+      }, 1000);
     },
     /**
      * 选取animate
@@ -216,8 +222,8 @@ export default {
 
       // this.getAnimation();
     },
-    async cancelAnimation() {
-      await this.$store.dispatch('deleteElementAnimate', this.animation);
+    cancelAnimation() {
+      this.$store.dispatch('deleteElementAnimate', this.animation);
       // await this.getAnimation();
       this.$forceUpdate();
     }

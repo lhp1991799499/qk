@@ -2,6 +2,10 @@ import { createUUID, deepClone } from '../../../common/uitls';
 import { cloneDeep, merge, random, sortBy } from 'lodash';
 import $config from '@client/config';
 
+// -------------
+// 废弃代码
+// _________
+
 // 元素配置信息字段
 let elementConfig = {
   elName: '', // 组件名

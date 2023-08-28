@@ -6,6 +6,7 @@
         src="../../../../../assets/image/icon/add.png"
       />添加文字
     </div>
+
     <!--div class="box-addFont">
       <ul>
         <li
@@ -20,6 +21,17 @@
         </li>
       </ul>
     </div-->
+
+    <div class="fontShadow">
+      <div
+        class="special"
+        v-for="(item, index) in 5"
+        :key="index"
+        @click="texiao(index)"
+      >
+        <div style="width: 103px; height: 68px; background-color: white"></div>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -77,6 +89,36 @@ export default {
           : elComponentData.props[key].default;
       }
       return props;
+    },
+    texiao(index) {
+      let props = this.getComponentProps('qk-text');
+      let item = {
+        default: {
+          height: 22
+        },
+        elName: 'qk-text',
+        icon: 'iconfont iconwenben',
+        title: '文字',
+        valueType: ''
+      };
+      let css = {
+        textShadow: ''
+      };
+      if (index == 1) {
+        css.textShadow =
+          '1px 1px rgba(197, 223, 248, 0.8),2px 2px rgba(197, 223, 248, 0.8), 3px 3px rgba(197, 223, 248, 0.8), 4px 4px rgba(197, 223, 248, 0.8), 5px 5px rgba(197, 223, 248, 0.8),6px 6px rgba(197, 223, 248, 0.8)';
+      } else if (index == 2) {
+        css.textShadow =
+          '-1px -1px rgba(197, 223, 248, 0.8), -2px -2px rgba(197, 223, 248, 0.8), -3px -3px rgba(197, 223, 248, 0.8), -4px -4px rgba(197, 223, 248, 0.8), -5px -5px rgba(197, 223, 248, 0.8), -6px -6px rgba(197, 223, 248, 0.8)';
+      }
+      this.$store.dispatch('addElement', {
+        ...item,
+        needProps: props,
+        css3: css
+      });
+      this.$nextTick(() => {
+        this.$bus.$emit('resetComponentsEditShape');
+      });
     }
   }
 };
@@ -126,6 +168,23 @@ export default {
         cursor: pointer;
       }
     }
+  }
+  .fontShadow {
+    display: flex;
+    flex-wrap: wrap;
+    .special {
+      width: 128px;
+      height: 109px;
+      background: #f8fafc;
+      border-radius: 4px;
+      margin-top: 16px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+  }
+  .fontShadow :nth-child(2n) {
+    margin-left: 16px;
   }
 }
 </style>

@@ -75,21 +75,21 @@ export default {
       },
       listAudios: [
         {
-          id: '',
+          id: '0',
           icon: 'img',
           name: '我把我唱给你听',
           singer: 'jay-zhou',
           timer: '3',
-          src: 'https://other-web-rh01-sycdn.kuwo.cn/72d3aebe34edf3722f1b7a7695e0c949/64799eb9/resource/n1/69/76/4224296359.mp3',
+          src: 'https://ev-sycdn.kuwo.cn/4b4d26ee86864fdb4106c207a41abe05/64c1e077/resource/n1/18/22/808666067.mp3?from$baidu&plat$web_www',
           using: false
         },
         {
-          id: '2',
+          id: '1',
           icon: 'img3',
           name: '浪花一朵朵',
           singer: 'jay-zhou',
           timer: '33',
-          src: 'https://other-web-nf01-sycdn.kuwo.cn/025dc2c9eb80388361e3049a928f9290/648835c0/resource/n1/95/97/4188423642.mp3',
+          src: 'https://other-web-nf01-sycdn.kuwo.cn/adddd5f8b17e216f070d8a1615823c16/64c1dfe3/resource/n2/64/28/2870731409.mp3?from$unkown&plat$web_www',
           using: false
         },
         {
@@ -98,7 +98,7 @@ export default {
           name: '红山果',
           singer: 'jay-zhou',
           timer: '33',
-          src: 'https://other-web-nf01-sycdn.kuwo.cn/e5e21b24da799cb1354fd8b2d3b53204/647d8db5/resource/n2/32/16/3716859782.mp3',
+          src: 'https://lf-sycdn.kuwo.cn/ded44769636a02d51c1840e8031345de/64c1df2c/resource/n2/84/78/391314227.mp3?from$unkown&plat$web_www',
           using: false
         }
       ],
@@ -127,7 +127,7 @@ export default {
 <style lang="scss" scoped>
 .container {
   width: 320px;
-  overflow-y: scroll;
+  // overflow-y: scroll;
   height: calc(100vh - 55px);
   padding: 24px;
   box-shadow: 2px 0px 6px 0px rgba(0, 21, 41, 0.12);

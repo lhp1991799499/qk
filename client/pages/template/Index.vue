@@ -229,6 +229,7 @@ export default {
      * 发布----
      */
     async publishFn() {
+      console.log(22);
       //先改名-改过了就不进行
       if (this.projectData.title === '视搭视频') {
         this.$prompt('请输入标题', '提示', {

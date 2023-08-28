@@ -38,14 +38,21 @@
     <div class="font-color">
       <div>文字颜色</div>
       <div class="color-box">
-        <input
+        <!-- <input
           class="picker-color"
           type="color"
           id="head"
           name="head"
-          :value="activeElement.commonStyle.color"
+          v-model="fontColor"
           @input="select"
-        />
+        /> -->
+
+        <el-color-picker
+          style="width: 100%; height: 100%"
+          v-model="activeElement.commonStyle.color"
+          @active-change="colorChange"
+        ></el-color-picker>
+
         <label for="head"></label>
       </div>
     </div>
@@ -58,9 +65,13 @@
           </div>
           <div>
             <el-input-number
-              v-model="activeElement.commonStyle.letterSpacing"
+              v-model="letterSpacing"
               controls-position="right"
-              @change="handleChange('jianju')"
+              @change="
+                (val) => {
+                  handleChange(val, 'letterSpacing');
+                }
+              "
               :min="0"
               size="small"
             ></el-input-number>
@@ -73,10 +84,14 @@
           </div>
           <div>
             <el-input-number
-              v-model="activeElement.commonStyle.lineHeight"
+              v-model="lineHeight"
               controls-position="right"
-              @change="handleChange('hanggao')"
-              :min="0"
+              @change="
+                (val) => {
+                  handleChange(val, 'lineHeight');
+                }
+              "
+              :min="1"
               size="small"
             ></el-input-number>
             <!-- :max="10" -->
@@ -170,7 +185,23 @@
       </div>
       <menu-edit-panel></menu-edit-panel>
       <div class="bind-title">绑定动态值</div>
-      <div>
+      <ul>
+        <li
+          class="item"
+          :class="{ active: item.value == active }"
+          v-for="(item, index) in bingValue"
+          :key="index"
+          @click="selectBindValue(item)"
+        >
+          <img
+            class="select_text"
+            src="../../../../../assets/image/icon/select_text.svg"
+            alt=""
+          />
+          {{ item.name }}
+        </li>
+      </ul>
+      <!-- <div>
         <el-select
           class="bind-select-box"
           v-model="actionValue"
@@ -185,7 +216,7 @@
           >
           </el-option>
         </el-select>
-      </div>
+      </div> -->
     </div>
   </div>
 </template>
@@ -195,25 +226,43 @@ import fonts from '../../../../../fonts.json';
 import editor from '@client/mixins/editor.js';
 import menuEditPanel from '../edit-panel/common/menu-edit-panel.vue';
 import { mapGetters } from 'vuex';
-
 export default {
   mixins: [editor],
   computed: {
     ...mapGetters(['activeElement', 'activePage']),
-    fontSizeValue() {
-      return this.activeElement.commonStyle.fontSize;
+    fontSizeValue: {
+      get() {
+        return this.activeElement.commonStyle.fontSize;
+      },
+      set(value) {}
+    },
+    letterSpacing: {
+      get() {
+        return this.activeElement.commonStyle.letterSpacing;
+      },
+      set(value) {}
+    },
+    lineHeight: {
+      get() {
+        return this.activeElement.commonStyle.lineHeight;
+      },
+      set(value) {}
     }
   },
   mounted() {
-    console.log(this.activeElement);
+    this.clearBtn(); // 清楚 清空按钮 和 确定按钮
   },
   components: { menuEditPanel },
+  created() {
+    this.fontType = fonts;
+  },
   data() {
     return {
       // commonStyle: this.activeElement.commonStyle,
       num01: 0,
       num02: 0,
       fontTypes: fonts,
+      fontColor: '#000000',
       fontSizes: [
         {
           value: 14,
@@ -228,16 +277,80 @@ export default {
           label: '18px'
         },
         {
-          value: 20,
-          label: '20px'
+          value: 24,
+          label: '24px'
         },
         {
-          value: 40,
-          label: '40px'
+          value: 30,
+          label: '30px'
+        },
+        {
+          value: 36,
+          label: '36px'
+        },
+        {
+          value: 48,
+          label: '48px'
         },
         {
           value: 60,
           label: '60px'
+        },
+        {
+          value: 72,
+          label: '72px'
+        },
+        {
+          value: 84,
+          label: '84px'
+        },
+        {
+          value: 96,
+          label: '96px'
+        },
+        {
+          value: 108,
+          label: '108px'
+        },
+        {
+          value: 120,
+          label: '120px'
+        },
+        {
+          value: 140,
+          label: '140px'
+        },
+        {
+          value: 150,
+          label: '150px'
+        },
+        {
+          value: 160,
+          label: '160px'
+        },
+        {
+          value: 180,
+          label: '180px'
+        },
+        {
+          value: 200,
+          label: '200px'
+        },
+        {
+          value: 250,
+          label: '250px'
+        },
+        {
+          value: 300,
+          label: '300px'
+        },
+        {
+          value: 400,
+          label: '400px'
+        },
+        {
+          value: 500,
+          label: '500px'
         }
       ],
       actionValues: [
@@ -251,16 +364,50 @@ export default {
       fontSize: {
         value: this.fontSizeValue || 16,
         label: this.fontSizeValue || 16 + 'px'
-      }
+      },
+      bingValue: [
+        {
+          name: '无绑定动态值',
+          value: '0'
+        },
+        {
+          name: '单买价',
+          value: '1'
+        },
+        {
+          name: '团购价',
+          value: '2'
+        },
+        {
+          name: '市场价',
+          value: '3'
+        },
+        {
+          name: '属性名称',
+          value: '4'
+        },
+        {
+          name: '自定义名称',
+          value: '5'
+        }
+      ],
+      active: '3',
+      timer: null //定时器
     };
   },
+
   methods: {
+    // 选中的动态绑定值
+    selectBindValue(select) {
+      this.active = select.value;
+    },
     //字体斜体
     fontItalic() {
-      this.$store.dispatch('resetElementCommonStyle', {
-        fontStyle:
-          this.activeElement.commonStyle.fontStyle === 'italic' ? '' : 'italic'
-      });
+      // this.$store.dispatch('resetElementCommonStyle', {
+      //   fontStyle:
+      //     this.activeElement.commonStyle.fontStyle === 'italic' ? '' : 'italic'
+      // });
+      this.$store.dispatch('elementCommand', 'fontItalic');
     },
     //字体加下划线
     fontUnderLine() {
@@ -293,6 +440,7 @@ export default {
       // console.log(this.activeElement.commonStyle, '横竖排列交换宽高');
       let height = this.activeElement.commonStyle.height;
       let width = this.activeElement.commonStyle.width;
+      console.log(height, width, 999);
       this.$store.dispatch('resetElementCommonStyle', {
         writingMode:
           this.activeElement.commonStyle.writingMode === 'vertical-lr'
@@ -313,36 +461,60 @@ export default {
     handleChangeBold() {
       this.$store.dispatch('elementCommand', 'fontB');
     },
+    // 颜色发生变化时
+    colorChange(value) {
+      this.activeElement.commonStyle.color = value;
+      if (this.timer) {
+        clearTimeout(this.timer);
+        this.timer = null;
+      }
+      this.timer = setTimeout(() => {
+        this.$store.dispatch('addHistoryCache');
+      }, 1000);
+    },
     // 颜色选择
     select(e) {
-      this.$store.dispatch('resetElementCommonStyle', {
-        color: e.target.value
-      });
+      // this.$store.commit('resetElementCommonStyle', {
+      //   color: e.target.value
+      // });
+      // this.activeElement.commonStyle.color = e.target.value;
+      // if (this.timer) {
+      //   clearTimeout(this.timer);
+      //   this.timer = null;
+      // }
+      // this.timer = setTimeout(() => {
+      //   this.$store.dispatch('addHistoryCache');
+      // }, 1000);
     },
     // 原本未绑定所选中的图层  绑定图层后将里面的方法都注释掉
-    handleChange(value) {
-      // if (value == 'jianju') {
-      //   console.log(value);
-      //   this.$store.dispatch('resetElementCommonStyle', {
-      //     letterSpacing: this.num01
-      //   });
-      // } else {
-      //   console.log(value);
-      //   this.$store.dispatch('resetElementCommonStyle', {
-      //     lineHeight: this.num02
-      //   });
-      // }
+    handleChange(val, style) {
+      if (style == 'letterSpacing') {
+        this.$store.commit('resetElementCommonStyle', {
+          letterSpacing: val,
+          statusHistory: false
+        });
+      } else {
+        this.$store.commit('resetElementCommonStyle', {
+          lineHeight: val,
+          statusHistory: false
+        });
+      }
+
+      this.$nextTick(() => {
+        this.$bus.$emit('resetComponentsEditShape');
+        this.$store.commit('addHistoryCache');
+      });
     },
     // 修改字体
     onchangeFont(item) {
       this.loadFont(item.name, item.content.ttf);
       // setTimeout(() => {
-      this.$store.dispatch('changeFont', item.name);
+      this.$store.dispatch('changeFont', item);
       // }, 0);
     },
     // 修改字体大小
     onchangeFontSize(item) {
-      // console.log('11111' + item.value);
+      console.log(666666);
       this.$store.dispatch('resetElementCommonStyle', {
         fontSize: item.value,
         width:
@@ -354,6 +526,20 @@ export default {
             this.activeElement.commonStyle.fontSize) *
           item.value
       });
+
+      this.$nextTick(() => {
+        this.$bus.$emit('resetComponentsEditShape');
+      });
+    },
+    // 清除颜色选择器的清除按钮 和 确认按钮
+    clearBtn() {
+      let bottomBtns = document.querySelector('.el-color-dropdown__btns');
+      bottomBtns.style.display = 'none';
+
+      let clearBtn = document.querySelector('.el-color-dropdown__link-btn');
+      let sureBtn = document.querySelector('.el-color-dropdown__btn');
+      clearBtn.style.display = 'none';
+      sureBtn.style.display = 'none';
     }
   }
 };
@@ -454,6 +640,19 @@ input[type='color']::-webkit-color-swatch {
   display: flex;
   justify-content: space-between;
   flex-wrap: wrap;
+
+  top: 0;
+  left: 80px;
+  bottom: 0;
+  width: 320px;
+  background: #ffffff;
+  box-shadow: 2px 0px 6px 0px rgba(0, 21, 41, 0.12);
+  z-index: 999;
+  padding: 24px;
+  left: unset;
+  right: 0;
+  font-size: 14px;
+  overflow-y: auto;
   .font-type {
     margin-right: 12px;
     flex: 3;
@@ -469,8 +668,8 @@ input[type='color']::-webkit-color-swatch {
   font-weight: 600;
   color: #333333;
   .color-box {
-    border: 2px solid #f6f7f9;
-    padding: 12px 12px 10px;
+    // border: 2px solid #f6f7f9;
+    // padding: 12px 12px 10px;
     margin-top: 16px;
   }
   .picker-color {
@@ -481,5 +680,49 @@ input[type='color']::-webkit-color-swatch {
 }
 .mb24 {
   margin-bottom: 24px !important;
+}
+.item {
+  // width: 84px;
+  height: 40px;
+  line-height: 40px;
+  padding-left: 30px;
+  position: relative;
+  border: 1px solid rgba(0, 0, 0, 0);
+  .select_text {
+    display: none;
+    position: absolute;
+    left: 8px;
+    top: 13px;
+    width: 14px;
+    height: 14px;
+  }
+}
+.active {
+  border: 1px solid #5584ff;
+  background: #f6f7f9;
+  border-radius: 4px;
+  position: relative;
+  .select_text {
+    display: block !important;
+  }
+}
+.item:hover {
+  background: #f6f7f9;
+  border-radius: 4px;
+}
+/deep/.el-color-picker__trigger {
+  width: 100%;
+  padding: 8px 12px;
+}
+/deep/.el-color-picker__color is-alpha {
+  height: 22px;
+}
+
+/deep/ .el-color-dropdown__link-btn-perform {
+  display: none;
+}
+// 隐藏清空按钮
+.-color-dropdown__link-btn {
+  display: none;
 }
 </style>

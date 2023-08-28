@@ -59,12 +59,12 @@ const addComponent = async (element) => {
       // url = path.join(__dirname, '../public', element.propsValue.imageSrc)
       const imgExt = path.extname(url).split('.').pop();
       if (imgExt === 'GIF' || imgExt === 'gif') {
-        if (
-          process.env.NODE_ENV !== 'dev' &&
-          process.env.NODE_ENV !== 'production'
-        ) {
-          url = path.join(__dirname, '../public', url);
-        }
+        // if (
+        //   process.env.NODE_ENV !== 'dev' &&
+        //   process.env.NODE_ENV !== 'production'
+        // ) {
+        //   url = path.join(__dirname, '../public', url);
+        // }
         comp = new FFGifImage({ path: url, ...commomStyle });
       } else {
         comp = new FFImage({ path: url, ...commomStyle });
@@ -75,12 +75,13 @@ const addComponent = async (element) => {
       const color = element.propsValue.bgColor;
       comp = new FFRect({ color, ...commomStyle });
       break;
-
     case 'qk-text':
       const text = element.propsValue.text;
+      console.log(element.propsValue.font);
       const fontName = element.propsValue.font.split('/')[1];
       const fontFile = fontRootPath + walk(fontRootPath, fontName);
       comp = new FFText({ text, ...commomStyle });
+
       comp.setStyle(element.commonStyle);
       if (fs.pathExistsSync(fontFile)) {
         comp.setFont(fontFile);
@@ -127,6 +128,7 @@ const addComponent = async (element) => {
 
   if (!isEmpty(element.animations)) {
     forEach(element.animations, (ani) => {
+      console.log(element.animations, 6666);
       const { type, duration = 1, delay = 1 } = ani;
       comp.addEffect(type, duration, delay);
     });
@@ -206,6 +208,7 @@ module.exports = (app) => ({
       creator.addChild(scene);
 
       for (let j = 0; j < page.elements.length; j++) {
+        console.log(page.elements[j]);
         const element = page.elements[j];
         const comp = await addComponent(element);
         if (comp) scene.addChild(comp);

@@ -1,3 +1,11 @@
+<!--
+ * @version: 
+ * @Author: leaolly
+ * @Date: 2023-03-22 09:35:06
+ * @LastEditors: Please set LastEditors
+ * @LastEditTime: 2023-07-26 14:13:28
+ * @Descripttion: 模块描述
+-->
 <template>
   <div class="container" style="display: block">
     <el-input
@@ -10,7 +18,12 @@
     </el-input>
     <div class="music-list">
       <div class="item">add</div>
-      <div v-for="item in listAudios" :key="item.id" class="item"></div>
+      <div
+        v-for="item in listAudios"
+        @click="projectDataChange(item)"
+        :key="item._id"
+        class="item"
+      ></div>
     </div>
   </div>
 </template>
@@ -19,12 +32,14 @@
 import scrollTabs from '../scroll-tabs.vue';
 import templateContainer from '../template-container.vue';
 import editor from '@client/mixins/editor.js';
+import templateJSON from '@client/pages/homes/components/home-context-components/templateJSON';
 
 export default {
   mixins: [editor],
   components: {
     scrollTabs,
-    templateContainer
+    templateContainer,
+    templateJSON
   },
   data() {
     return {
@@ -39,28 +54,18 @@ export default {
           // height: 40,
         }
       },
-      listAudios: [
-        {
-          id: '',
-          icon: 'img',
-          name: '稻香',
-          singer: 'jay-zhou',
-          timer: '3',
-          using: true
-        },
-        {
-          id: '2',
-          icon: 'img3',
-          name: '稻香2',
-          singer: 'jay-zhou2',
-          timer: '33',
-          using: false
-        }
-      ]
+      listAudios: templateJSON.templateObj
     };
   },
   methods: {
-    onClearChange() {}
+    onClearChange() {},
+    projectDataChange(item) {
+      this.$store.dispatch('setPrjectData', item);
+      this.$store.dispatch('addHistoryCache');
+    }
+  },
+  mounted() {
+    console.log(this.listAudios);
   }
 };
 </script>
@@ -68,7 +73,7 @@ export default {
 <style lang="scss" scoped>
 .container {
   width: 320px;
-  overflow-y: scroll;
+  // overflow-y: scroll;
   height: calc(100vh - 55px);
   padding: 24px;
   box-shadow: 2px 0px 6px 0px rgba(0, 21, 41, 0.12);

@@ -3,7 +3,7 @@
  * @Author: leaolly
  * @Date: 2023-03-22 09:35:06
  * @LastEditors: Please set LastEditors
- * @LastEditTime: 2023-06-15 15:28:27
+ * @LastEditTime: 2023-08-08 13:31:22
  * @Descripttion: 模块描述
 -->
 <template>
@@ -15,14 +15,21 @@
           activeElement &&
           activeElement.elName === 'qk-text'
         "
-        :class="[labelType == 'qk-text' ? 'active' : '', 'qk-text']"
+        :class="[
+          (activeElement && activeElement.elName) == 'qk-text' &&
+          labelType !== 'qk-animation'
+            ? 'active'
+            : '',
+          'qk-text'
+        ]"
         @click="tabClick('qk-text')"
         slot="label"
       >
         <!-- <i class="el-icon-date"></i>  -->
         <img
           :src="
-            require(labelType == 'qk-text'
+            require((activeElement && activeElement.elName) == 'qk-text' &&
+              labelType !== 'qk-animation'
               ? '../../../../assets/image/canvasSvg/rightTabFont_curr.svg'
               : '../../../../assets/image/canvasSvg/rightTabFont.svg')
           "
@@ -36,14 +43,21 @@
           activeElement &&
           activeElement.elName === 'qk-image'
         "
-        :class="[labelType == 'qk-image' ? 'active' : '', 'qk-image']"
+        :class="[
+          (activeElement && activeElement.elName) == 'qk-image' &&
+          labelType !== 'qk-animation'
+            ? 'active'
+            : '',
+          'qk-image'
+        ]"
         @click="tabClick('qk-image')"
         slot="label"
       >
         <!-- <i class="el-icon-date"></i>  -->
         <img
           :src="
-            require(labelType == 'qk-image'
+            require((activeElement && activeElement.elName) == 'qk-image' &&
+              labelType !== 'qk-animation'
               ? '../../../../assets/image/canvasSvg/rightTabImage_curr.svg'
               : '../../../../assets/image/canvasSvg/rightTabImage.svg')
           "
@@ -69,8 +83,20 @@
       >
     </div>
 
-    <edit-panel-font v-if="labelType === 'qk-text' ? true : false" />
-    <imageSet v-if="labelType === 'qk-image'"></imageSet>
+    <edit-panel-font
+      v-if="
+        (activeElement && activeElement.elName) === 'qk-text' &&
+        labelType !== 'qk-animation'
+          ? true
+          : false
+      "
+    />
+    <imageSet
+      v-if="
+        (activeElement && activeElement.elName) === 'qk-image' &&
+        labelType !== 'qk-animation'
+      "
+    ></imageSet>
     <edit-panel-animation v-if="labelType === 'qk-animation' ? true : false" />
 
     <!-- <el-tabs type="border-card" stretch>
@@ -86,7 +112,6 @@
 </template>
 
 <script>
-var that;
 import editPanelFont from './edit-panel/edit-panel-font.vue';
 import editPanelAnimation from './edit-panel/edit-panel-animation.vue';
 import imageSet from './imageSet.vue';
@@ -112,23 +137,20 @@ export default {
   methods: {
     tabClick(str) {
       this.labelType = str;
+    },
+    labelTypeChange(val) {
+      if (!val) return;
+      if (val.indexOf('qk-text') != -1) {
+        this.labelType = 'qk-text';
+      } else if (val.indexOf('qk-image') != -1) {
+        this.labelType = 'qk-image';
+      } else if (val.indexOf('qk-animation') != -1) {
+        this.labelType = 'qk-animation';
+      }
     }
   },
-  mounted: {
-    that: this
-  },
-  watch: {
-    activeElement: {
-      handler: function (newVal, oldVal) {
-        if (newVal.elName) {
-          if (newVal.elName != this.labelType) {
-            this.labelType = newVal.elName;
-          }
-        }
-      },
-      immediate: true
-      // deep: true
-    }
+  mounted() {
+    this.$bus.$on('labelTypeChange', this.labelTypeChange);
   }
 };
 </script>
@@ -137,10 +159,17 @@ export default {
   height: 100%;
 }
 .edit-panel-container {
-  width: 320px;
-  box-sizing: border-box;
+  top: 55px;
+  position: absolute;
+  left: 80px;
+  bottom: 0;
+  background: #ffffff;
   box-shadow: 2px 0px 6px 0px rgba(0, 21, 41, 0.12);
-  background: gainsboro;
+  z-index: 999;
+  left: unset;
+  right: 0;
+  font-size: 14px;
+  width: 320px;
 }
 .fontOranimation {
   background-color: white;

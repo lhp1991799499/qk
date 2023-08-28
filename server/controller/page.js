@@ -170,6 +170,7 @@ module.exports = (app) => ({
       pc: 'pc'
     };
     ctx.status = 200;
+    console.log(pageMode[pageData.pageMode], 666);
     await ctx.render(pageMode[pageData.pageMode], {
       pageData: encodeURIComponent(JSON.stringify(pageData))
     });

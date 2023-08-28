@@ -1,5 +1,16 @@
+<!--
+ * @version: 
+ * @Author: leaolly
+ * @Date: 2023-04-06 09:40:20
+ * @LastEditors: Please set LastEditors
+ * @LastEditTime: 2023-07-14 10:19:02
+ * @Descripttion: 模块描述
+-->
 <template>
-  <div class="left-container-content">
+  <div
+    class="left-container-content"
+    :style="{ transform: show ? 'translateX(0)' : 'translateX(-100%)' }"
+  >
     <div v-show="show">
       <material v-if="i === 0" />
       <left-font v-if="i === 1" />
@@ -20,43 +31,68 @@
 </template>
 
 <script>
-import material from "./home-context-components/left-material.vue";
-import leftFont from "./home-context-components/left-font.vue";
-import leftMusic from "./home-context-components/left-music.vue";
-import leftUpload from "./home-context-components/left-upload.vue";
-import leftModuleboard from "./home-context-components/left-moduleboard.vue";
+import material from './home-context-components/left-material.vue';
+import leftFont from './home-context-components/left-font.vue';
+import leftMusic from './home-context-components/left-music.vue';
+import leftUpload from './home-context-components/left-upload.vue';
+import leftModuleboard from './home-context-components/left-moduleboard.vue';
 
 export default {
   props: {
     i: {
       type: Number,
-      default: 0,
-    },
+      default: 0
+    }
+  },
+  watch: {
+    i(val, value) {
+      if (val != -1) {
+        this.show = true;
+      } else if (val == this.leftIndex) {
+        this.show = false;
+        this.$emit('onChangeTab', -1);
+      }
+      this.$bus.$emit('leftContentShow', this.show);
+    }
   },
   computed: {},
   components: { material, leftFont, leftMusic, leftUpload, leftModuleboard },
   data() {
     return {
       show: true,
+      leftIndex: -1
     };
   },
   methods: {
     toggleLeft() {
+      if (this.show) {
+        this.leftIndex = this.i;
+        this.$emit('onChangeTab', -1);
+      } else {
+        this.$emit('onChangeTab', this.leftIndex);
+      }
       this.show = !this.show;
-    },
-  },
+      this.$bus.$emit('leftContentShow', this.show);
+    }
+  }
 };
 </script>
 
 <style lang="scss" scoped>
 .toggle-btn {
+  position: absolute;
+  top: 50%;
+  right: -24px;
+  transform: translateY(-50%);
   width: 24px;
-  height: 100px;
+  height: 99px;
+  box-shadow: 2px 0px 6px 0px rgba(0, 21, 41, 0.12);
+  border-radius: 0px 20px 20px 0px;
+  background: #ffffff;
   cursor: pointer;
-  height: 100%;
-  display: flex;
-  align-items: center;
-  background-color: #eceff1;
+  justify-content: center;
+  z-index: 1;
+
   .img-box {
     display: flex;
     align-items: center;
@@ -73,6 +109,13 @@ export default {
   }
 }
 .left-container-content {
-  display: flex;
+  position: absolute;
+  top: 0;
+  left: 80px;
+  bottom: 0;
+  width: 320px;
+  background: #ffffff;
+  box-shadow: 2px 0px 6px 0px rgba(0, 21, 41, 0.12);
+  z-index: 999;
 }
 </style>

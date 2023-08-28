@@ -6,12 +6,14 @@
       :percentage="percent"
       v-if="!showVideo"
     ></el-progress>
+
     <previewWrapper
       :pageData="pageData"
       :videoUrl="videoUrl"
       :showVideo="showVideo"
       @closePanel="closePanel"
     />
+
     <screenshotLayer @making="making" />
   </div>
 </template>
@@ -40,8 +42,12 @@ export default {
     };
   },
   mounted() {
+    // 当前的元素插入到body中
+    const el = this.$el;  // 获取到当前组件dom 
+    document.body.appendChild(el);  // 当前组件插入到 body中
     $bus.$on('publish', this.publishFun);
   },
+  // 组件销毁 取消监听publish事件
   beforeDestroy() {
     $bus.$off('publish', this.publishFun);
   },

@@ -9,7 +9,13 @@
           </div>
           <div class="imgs-container">
             <div v-for="i in item.items.slice(0, 3)" :key="i.img">
-              <div class="img-box" @click="handleClick(i)"></div>
+              <div class="img-box" @click="handleClick(i)">
+                <img
+                  style="width: 100%; height: 100%"
+                  :src="i.url ? i.url : ''"
+                  alt=""
+                />
+              </div>
             </div>
           </div>
         </div>
@@ -20,7 +26,13 @@
             v-for="item in leftMoreImages[moreObj.index].items"
             :key="item.img"
           >
-            <div class="img-box" @click="handleClick(item)"></div>
+            <div class="img-box" @click="handleClick(item)">
+              <img
+                style="width: 100%; height: 100%"
+                :src="item.url ? item.url : ''"
+                alt=""
+              />
+            </div>
           </div>
         </div>
       </div>
@@ -29,7 +41,13 @@
     <div v-else>
       <div class="imgs-container">
         <div v-for="item in imgs" :key="item.idx">
-          <div class="img-box" @click="handleClick(item.idx)"></div>
+          <div class="img-box" @click="handleClick(item.idx)">
+            <img
+              style="width: 100%; height: 100%"
+              :src="item.url ? item.url : ''"
+              alt=""
+            />
+          </div>
         </div>
       </div>
     </div>
@@ -132,15 +150,20 @@ export default {
           items: [
             {
               img: '0',
-              elName: 'qk-image'
+              elName: 'qk-image',
+              url: 'http://seopic.699pic.com/photo/50051/4111.jpg_wh1200.jpg',
+              width: 100,
+              height: 66
             },
             {
               img: '1',
               elName: 'qk-image'
+              // url: 'https://up.enterdesk.com/edpic_source/eb/34/40/eb34405739ad0e41ec34cd8e16711f30.jpg'
             },
             {
               img: '2',
-              elName: 'qk-image'
+              elName: 'qk-image',
+              url: 'https://gimg2.baidu.com/image_search/src=http%3A%2F%2Fsafe-img.xhscdn.com%2Fbw1%2Ff726ac98-b6da-4003-a098-b9290b3738ef%3FimageView2%2F2%2Fw%2F1080%2Fformat%2Fjpg&refer=http%3A%2F%2Fsafe-img.xhscdn.com&app=2002&size=f9999,10000&q=a80&n=0&g=0n&fmt=auto?sec=1691823094&t=1138e6bc5eff916179373a9f42962d93'
             },
             {
               img: '4',
@@ -173,13 +196,21 @@ export default {
           name: '男装',
           items: [
             {
-              img: '0'
+              img: '0',
+              elName: 'qk-image',
+              url: 'https://img.alicdn.com/imgextra/i2/2516501003/O1CN01NLp48t1JHQ5HbENCe_!!2516501003.jpg',
+              width: 100,
+              height: 133
             },
             {
-              img: '1'
+              img: '1',
+              elName: 'qk-image',
+              url: 'https://img.alicdn.com/imgextra/i2/2516501003/O1CN01NLp48t1JHQ5HbENCe_!!2516501003.jpg'
             },
             {
-              img: '2'
+              img: '2',
+              elName: 'qk-image',
+              url: 'https://p6.itc.cn/q_70/images03/20200609/37861e24800c4a0c96f3238cdca3348f.gif'
             },
             {
               img: '4'
@@ -194,13 +225,25 @@ export default {
           name: '女装',
           items: [
             {
-              img: '0'
+              img: '0',
+              elName: 'qk-image',
+              url: 'https://st-gdx.dancf.com/odyssey/uxms/430180897/96739/20210222-145154-f50b.jpeg?x-oss-process=image%2Fresize%2Cl_3000',
+              width: 790,
+              height: 1108
             },
             {
-              img: '1'
+              img: '1',
+              elName: 'qk-image',
+              url: 'https://gd-filems.dancf.com/gaoding/gaoding/30828/62b8fa1558ee471e820bb210e1549245.png?auth_key=1690357791-cf3af4912a994d058c11ff1002156723-9024220393870738478-233a48051a185ed1f75ab77b02d1cc0a',
+              width: 621,
+              height: 1104
             },
             {
-              img: '2'
+              img: '2',
+              elName: 'qk-image',
+              url: 'https://gd-filems.dancf.com/gaoding/gaoding/30828/1deacf328ff94a06815127a4a37384e5.png?auth_key=1690357791-cf3af4912a994d058c11ff1002156723-9024220393870738478-233a48051a185ed1f75ab77b02d1cc0a',
+              width: 167,
+              height: 212
             }
           ]
         },
@@ -209,7 +252,11 @@ export default {
           name: '几何',
           items: [
             {
-              img: '0'
+              img: '0',
+              elName: 'qk-image',
+              url: 'https://gd-filems.dancf.com/gaoding/gaoding/30828/d2d8b77f820c481daac9fb7f06ed3879.png?auth_key=1690357791-cf3af4912a994d058c11ff1002156723-9024220393870738478-233a48051a185ed1f75ab77b02d1cc0a',
+              width: 34,
+              height: 78
             },
             {
               img: '1'
@@ -275,27 +322,25 @@ export default {
     moreClick(index) {
       if (index != -1) {
         this.allFlag = true;
-        console.log(index);
         this.moreObj.index = index;
       } else {
         this.allFlag = false;
       }
     },
-    handleClick() {
-      let item = {
+    handleClick(item) {
+      let items = {
         elName: 'qk-image',
         title: '图片',
         icon: 'iconfont iconshouyelunbotu',
         valueType: '', // 标识数据类型，用于表单组件,
         defaultStyle: {
-          height: 210
-        },
-        imageUrl: '/static/demo/demo.jpg'
+          height: item.height,
+          width: item.width
+        }
       };
-      //在这里传入图片路径
-      this.$bus.$emit('ceshi', item.url);
-      let props = this.getComponentProps(item.elName);
-      this.$store.dispatch('addElement', { ...item, needProps: props });
+      let props = this.getComponentProps(items.elName);
+      props.imageSrc = item.url;
+      this.$store.dispatch('addElement', { ...items, needProps: props });
     }
   }
 };

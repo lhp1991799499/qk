@@ -3,13 +3,14 @@
  * @Author: leaolly
  * @Date: 2023-04-27 12:07:27
  * @LastEditors: Please set LastEditors
- * @LastEditTime: 2023-06-12 17:05:54
+ * @LastEditTime: 2023-08-26 09:55:29
  * @Descripttion: 模块描述
 -->
 <!--test.vue-->
 <template>
   <div
     class="qk-text"
+    ref="qk-text"
     contenteditable="plaintext-only"
     @input="changeDivText($event)"
     @focus="divFocus"
@@ -29,7 +30,8 @@ export default {
   },
   computed: {
     ...mapState({
-      projectData: (state) => state.editor.projectData
+      projectData: (state) => state.editor.projectData,
+      transformScalce: (state) => state.editor.transformScalce
     }),
     ...mapGetters(['activeElement', 'activePage'])
   },
@@ -40,24 +42,23 @@ export default {
     },
     font: {
       type: String,
-      default: 'wryh'
+      default: 'SourceHanSansSC-ExtraLight'
+    },
+    ttf: {
+      type: String,
+      default:
+        'https://st0.dancf.com/csc/213/fonts/224/20210601-182150-e9bc.ttf'
     }
   },
-  watch: {
-    showText: {
-      handler: function (newVal, oldVal) {
-        console.log(newVal, oldVal, this.showText);
-      },
-      deep: true
-    }
-  },
+  watch: {},
   data() {
     return {
       defaultStyle: {
         height: 40
       },
       showText: '',
-      editing: false
+      editing: false,
+      timer: null
     };
   },
   created() {
@@ -65,17 +66,27 @@ export default {
   },
   methods: {
     resizing(x, y, w, h) {
-      console.log('resizing', x, y, w, h);
+      // console.log('resizing', x, y, w, h);
     },
     rotating(angle) {
-      console.log(angle);
+      // console.log(angle);
     },
     // 文本改变时事件
     changeDivText(event) {
       this.editText = event.target.innerHTML;
       this.$store.dispatch('changeDivText', this.editText);
+      let width = this.$refs['qk-text'].offsetWidth;
+      let height = this.$refs['qk-text'].offsetHeight;
+      // 文字发生变化不记录
+      this.$store.dispatch('resetElementCommonStyle', {
+        width: width,
+        height: height,
+        statusHistory: false
+      });
+      this.$emit('resize');
     },
     divFocus() {
+      console.log(7777);
       this.editText = this.value;
     },
     divBlur() {

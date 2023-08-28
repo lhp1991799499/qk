@@ -75,10 +75,6 @@ export default {
   computed: {
     usedItems() {
       this.items.forEach((e) => {
-        console.log(
-          this.$store.getters.activeElement,
-          this.$store.getters.activeElement.animations
-        );
         const animations =
           this.$store.getters.activeElement &&
           this.$store.getters.activeElement.animations;
@@ -178,6 +174,11 @@ export default {
             // { label: '向左长距退出', value: 'fadeOutLeftBig' },
             // { label: '向右长距退出', value: 'fadeOutRightBig' },
             // { label: '向上长距退出', value: 'fadeOutUpBig' }
+
+            { label: '由大变小退出', value: 'zoomOut' },
+            { label: '弹入', value: 'bounceIn' },
+            //
+
             { label: '弹跳', value: 'bounce', unclick: true },
             { label: '闪烁', value: 'flash', unclick: true },
             { label: '放大缩小', value: 'pulse', unclick: true },

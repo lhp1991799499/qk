@@ -1,12 +1,23 @@
 <template>
   <div class="engine-template-wrapper">
-    <div class="relative" v-for="(page, i) in pageData.pages" :key="i" :style="getCommonStyle(page.commonStyle)">
+    <div
+      class="relative"
+      v-for="(page, i) in pageData.pages"
+      :key="i"
+      :style="getCommonStyle(page.commonStyle)"
+    >
       <!--页面内容区域-->
       <div
         class="quark-page-wrapper"
         :style="
           getCommonStyle(
-            { ...page.commonStyle, top: pageTop, height: pageData.height, width: pageData.width, position: 'relative' },
+            {
+              ...page.commonStyle,
+              top: pageTop,
+              height: pageData.height,
+              width: pageData.width,
+              position: 'relative'
+            },
             scalingRatio
           )
         "
@@ -25,12 +36,12 @@
 </template>
 
 <script>
-import editorProjectConfig from "@client/pages/editor/DataModel";
-import componentsTemplate from "../../components/components-template";
-import $config from "@client/config";
-import elementEvents from "@client/mixins/elementEvents";
+import editorProjectConfig from '@client/pages/editor/DataModel';
+import componentsTemplate from '../../components/components-template';
+import $config from '@client/config';
+import elementEvents from '@client/mixins/elementEvents';
 export default {
-  name: "engineH5Long",
+  name: 'engineH5Long',
   components: {
     componentsTemplate
   },
@@ -48,7 +59,10 @@ export default {
   created() {
     this.pageData = window._pageData;
     this.scalingRatio = document.body.clientWidth / $config.canvasH5Width;
-    this.pageTop = (document.documentElement.clientHeight - this.pageData.height * this.scalingRatio) / 2;
+    this.pageTop =
+      (document.documentElement.clientHeight -
+        this.pageData.height * this.scalingRatio) /
+      2;
     this.pageTop = Math.max(this.pageTop, 0);
   },
   methods: {
@@ -58,8 +72,12 @@ export default {
      */
     async handleElementClick(eventsData, element) {
       for (let i = 0, len = eventsData.length; i < len; i++) {
-        if (this["_event_" + eventsData[i].type]) {
-          await this["_event_" + eventsData[i].type](eventsData[i], element, this.pageData);
+        if (this['_event_' + eventsData[i].type]) {
+          await this['_event_' + eventsData[i].type](
+            eventsData[i],
+            element,
+            this.pageData
+          );
         }
       }
     }

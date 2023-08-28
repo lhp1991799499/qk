@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev-client": "vue-cli-service serve",
-    "dev-server": "nodemon server/app.js dev -L",
+    "dev-server": "nodemon debug server/app.js dev -L",
     "dev": "npm run dev-client",
     "build": "vue-cli-service build",
     "publish": "npm run build && node ./scripts/publish",
@@ -26,8 +26,8 @@
     "cash-dom": "^8.1.0",
     "core-js": "^2.6.5",
     "crypto-js": "^3.1.9-1",
-    "deasync": "^0.1.28",
     "dom-to-image": "^2.6.0",
+    "element-resize-detector": "^1.2.4",
     "element-ui": "~2.13.0",
     "ffcreator": "^6.4.3",
     "fluent-ffmpeg": "^2.1.2",
@@ -85,11 +85,11 @@
     "koa2-cors": "^2.0.6",
     "mongodb": "^3.3.3",
     "mongoose": "^5.13.10",
-    "sass-loader": "^10.0.4",
     "node-sass": "^6.0.1",
     "nodemon": "^1.19.4",
     "psd": "^3.2.0",
     "pug": "^2.0.3",
+    "sass-loader": "^10.0.1",
     "vue-template-compiler": "^2.6.10"
   }
 }

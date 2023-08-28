@@ -51,8 +51,63 @@
         </el-tooltip>
       </div>
     </div>
-    <div>
-      <el-button @click="preview">预览</el-button>
+    <div class="titleLeft">
+      <!-- <el-tooltip
+        class="item"
+        effect="dark"
+        content="请输入你设计视频的总时长"
+        placement="bottom"
+      >
+        <div class="animationDuration">
+          <img
+            src="../../../../assets/image/canvasSvg/animationDuration.svg"
+            alt=""
+          />
+          <span>视频时间设定</span>
+          <div
+            style="
+              width: 70px;
+              height: 28px;
+              display: flex;
+              flex-wrap: nowrap;
+              align-items: center;
+            "
+          >
+            <el-form
+              :model="animationForm"
+              ref="animationForm"
+              class="demo-ruleForm"
+              style="width: 100%; height: 100%; margin-top: -12px"
+            >
+              <el-form-item
+                prop="animationDuration"
+                :rules="[
+                  { required: true, message: '视频时长不能为空' },
+                  { type: 'number', message: '视频时长必须为数字值' },
+                  {
+                    pattern: /^(1|[1-9]|[1-2][0-9]|30)$/,
+                    message: '范围在1-30',
+                    trigger: 'blur'
+                  }
+                ]"
+              >
+                <el-input
+                  size="mini"
+                  v-model.number="animationForm.animationDuration"
+                  onkeyup="this.value=this.value.replace(/\D/g,'')"
+                  onafterpaste="this.value=this.value.replace(/\D/g,'')"
+                  autocomplete="off"
+                ></el-input>
+              </el-form-item>
+            </el-form>
+
+            <span style="margin-left: 10px">s</span>
+          </div>
+        </div>
+      </el-tooltip> -->
+
+      <el-button @click="preview('h5')">H5预览</el-button>
+      <el-button @click="preview('imgae')">图片预览</el-button>
       <el-button @click="publishFun">生成视频</el-button>
       <el-button type="primary" class="save" @click="publishFun"
         >上传</el-button
@@ -60,6 +115,7 @@
     </div>
 
     <!--预览-->
+
     <makingPanel
       v-if="showMakingPanel"
       :pageData="projectData"
@@ -94,12 +150,17 @@ export default {
       widgetHistoryBack: [], //记录历史记录返回
       inputName: '测试input', //input的名称
       topToolFlag: false, //是否显示重命名
-      showMakingPanel: false
+      showMakingPanel: false,
+      animationDuration: 0,
+      animationForm: {
+        animationDuration: 0
+      }
     };
   },
   computed: {
-    ...mapGetters(['canUndo', 'canRedo']),
+    ...mapGetters(['canUndo', 'canRedo', 'activePage']),
     ...mapState({ projectData: (state) => state.editor.projectData }),
+
     canClickPrev() {
       // 是否能点击上一步
       return this.historyIndex > -1;
@@ -116,6 +177,7 @@ export default {
     /**
      * 保存
      */
+
     async saveFn() {
       const updatePageData = (pageData) => {
         this.$API.updatePage({ pageData }).then(() => {
@@ -134,12 +196,32 @@ export default {
         })
         .catch(() => {});
     },
-    // ----------------------------
+    // ---------------------------- 生成视频
     publishFun() {
-      const data = { ...this.projectData, isPublish: true };
+      let times = 0;
+      this.activePage.elements.forEach((item) => {
+        item.animations.forEach((items) => {
+          if (times < items.delay + items.duration) {
+            times = items.delay + items.duration;
+          }
+        });
+      });
+      this.$store.commit('setVideoDuration', times);
+      const data = JSON.parse(
+        JSON.stringify({ ...this.projectData, isPublish: true })
+      );
+      data.pages = cloneDeep([this.activePage]);
       this.showMakingPanel = true;
-      this.$API.updatePage({ pageData: data });
+      // this.$API.updatePage({ pageData: data });
       this.$nextTick(() => $bus.$emit('publish'));
+
+      // this.$refs.animationForm.validate((valid) => {
+      //   if (valid) {
+
+      //   } else {
+      //     return false;
+      //   }
+      // });
     },
     // --------------------
     // @blur 是当元素失去焦点时所触发的事件
@@ -150,8 +232,8 @@ export default {
     inputBlur() {
       this.topToolFlag = false;
     },
-    preview() {
-      this.$bus.$emit('previewCanvas', 111);
+    preview(type) {
+      this.$bus.$emit('previewCanvas', type);
     },
     previewVideo() {
       this.$emit('publish');
@@ -193,13 +275,40 @@ export default {
   }
 }
 .header {
-  height: 55px;
   display: flex;
   align-items: center;
   justify-content: space-between;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 55px;
+  padding: 0 25px;
+  z-index: 10;
+  background: #ffffff;
   box-shadow: 0px 2px 6px 0px rgba(0, 21, 41, 0.12);
-  padding-left: 24px;
-  padding-right: 24px;
+  .titleLeft {
+    display: flex;
+    flex-wrap: nowrap;
+  }
+  .animationDuration {
+    font-size: 14px;
+    width: 230px;
+    height: 40px;
+    background: #fbfbfb;
+    border-radius: 4px;
+    border: 1px dashed #e0e0e0;
+    margin-right: 16px;
+    display: flex;
+    flex-wrap: nowrap;
+    justify-content: space-around;
+    align-items: center;
+    padding: 0 16px;
+    img {
+      width: 20px;
+      height: 20px;
+    }
+  }
 }
 .save {
   color: #ffffff;

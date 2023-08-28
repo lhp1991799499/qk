@@ -1,3 +1,11 @@
+/*
+ * @version:
+ * @Author: leaolly
+ * @Date: 2023-03-22 09:35:06
+ * @LastEditors:
+ * @LastEditTime: 2023-07-18 17:58:41
+ * @Descripttion: 模块描述
+ */
 import Vue from 'vue';
 import App from './App.vue';
 import router from './router';
@@ -11,6 +19,7 @@ import AES from '@/common/js/secret';
 import * as API from '@/api/index';
 
 import Element from 'element-ui';
+import Timeline from '@/components/timeline/index.vue'
 import '@/common/styles/element-variables.scss';
 import '@/common/styles/index.scss'; // 自定义 css
 import 'animate.css';
@@ -24,6 +33,7 @@ Vue.use(scroll);
 Vue.use(Element);
 Vue.use(VueClipboard);
 
+Vue.component('TimeLine', Timeline) // 全局注册时间轴组件
 // 引入拖动效果
 import { drag } from './directives/drag';
 
@@ -74,7 +84,7 @@ Vue.config.productionTip = false;
 
 store.commit('UPDATE_USER_FROM_LOCAL');
 
-new Vue({
+export default new Vue({
   router,
   store,
   render: (h) => h(App)

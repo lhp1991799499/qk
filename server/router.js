@@ -39,11 +39,14 @@ module.exports = (app) => {
     $controller.page.myPages
   );
   router.post('/quark/page/create', $middleware.auth, $controller.page.create);
+
+  // 生成视频
   router.post(
     '/quark/page/update',
     $middleware.auth,
     $controller.page.updatePage
   );
+
   router.post(
     '/quark/page/delete',
     $middleware.auth,

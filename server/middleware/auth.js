@@ -1,17 +1,28 @@
-"use strict";
+/*
+ * @version:
+ * @Author: leaolly
+ * @Date: 2023-03-22 09:35:07
+ * @LastEditors: Please set LastEditors
+ * @LastEditTime: 2023-08-12 17:16:03
+ * @Descripttion: 模块描述
+ */
+'use strict';
 
 /**
  * 登录验证
  * @author huangwei9527
  * @return {null} null
  */
-module.exports = app => {
-  return async function(ctx, next) {
+module.exports = (app) => {
+  return async function (ctx, next) {
     let { $helper } = app;
-    let token = "";
+    let token = '';
 
-    if (ctx.headers.authorization && ctx.headers.authorization.split(" ")[0] === "Bearer") {
-      token = ctx.headers.authorization.split(" ")[1];
+    if (
+      ctx.headers.authorization &&
+      ctx.headers.authorization.split(' ')[0] === 'Bearer'
+    ) {
+      token = ctx.headers.authorization.split(' ')[1];
     } else if (ctx.query.accesstoken) {
       token = ctx.query.accesstoken;
     } else if (ctx.request.body.accesstoken) {
@@ -22,11 +33,11 @@ module.exports = app => {
     try {
       user = await $helper.checkToken(token);
     } catch (e) {
-      $helper.returnBody(false, {}, "Token 无效，请重新登录", 401);
+      $helper.returnBody(false, {}, 'Token 无效，请重新登录', 401);
     }
 
     if (!user) {
-      $helper.returnBody(false, {}, "Token 无效，请重新登录", 401);
+      $helper.returnBody(false, {}, 'Token 无效，请重新登录', 401);
       return;
     }
 

@@ -72,12 +72,10 @@ export default {
      * 对元素进行操作命令
      */
     handleElementCommand(command) {
-      console.log(command);
       this.$store.dispatch('elementCommand', command);
     },
     // 复制元素
     copyElement() {
-      console.log('coped');
       this.$store.dispatch('elementCommand', 'copy');
     },
     // 锁定
@@ -87,6 +85,12 @@ export default {
         lock: this.activeElement.commonStyle.lock === true ? false : true
       });
     }
+  },
+  mounted() {
+    this.$bus.$on('lockClickChange', this.lockClick);
+  },
+  beforeDestroy() {
+    this.$bus.$off('lockClickChange');
   }
 };
 </script>

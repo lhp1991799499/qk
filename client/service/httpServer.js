@@ -165,5 +165,5 @@ export default {
     url = $config.baseURL + url + "?" + list.join("&");
     url = encodeURI(url);
     downloadFile(url);
-  }
+  },
 };

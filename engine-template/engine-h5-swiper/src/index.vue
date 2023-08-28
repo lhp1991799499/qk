@@ -21,40 +21,42 @@
                   width: pageData.width,
                   position: 'relative'
                 },
-                scalingRatio
+                scalingRatio,
+                true
               )
             "
-          >aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+          >
             <componentsTemplate
               v-for="(item, index) in page.elements"
               :key="index"
               :loaded="item._loaded"
-              @handleElementClick="handleElementClick"
+              @handleElementClick="handleElementClick(item)"
               :element="item"
-              :style="getCommonStyle(item.commonStyle, scalingRatio)"
+              :style="getCommonStyle(item.commonStyle, scalingRatio, true)"
             >
             </componentsTemplate>
           </div>
         </div>
       </div>
-      <div class="swiper-pagination">aaaaaaaasssaaaaaaaa</div>
+      <div class="swiper-pagination"></div>
       <!--分页器。如果放置在swiper-container外面，需要自定义样式。-->
     </div>
   </div>
 </template>
 
 <script>
-import editorProjectConfig from "@client/pages/editor/DataModel";
-import componentsTemplate from "./components-template";
-import $config from "@client/config";
+import editorProjectConfig from '@client/pages/editor/DataModel';
+import componentsTemplate from './components-template';
+import $config from '@client/config';
 export default {
-  name: "engineH5Swiper",
+  name: 'engineH5Swiper',
   components: {
     componentsTemplate
   },
   data() {
     return {
       getCommonStyle: editorProjectConfig.getCommonStyle,
+      getCommonStyleCopy: editorProjectConfig.getCommonStyle,
       scalingRatio: 1,
       pageData: {
         pages: []
@@ -66,12 +68,21 @@ export default {
   created() {
     let pageData = window._pageData;
     this.scalingRatio = document.body.clientWidth / $config.canvasH5Width;
-    this.pageTop = (document.documentElement.clientHeight - pageData.height * this.scalingRatio) / 2;
+    this.pageTop =
+      (document.documentElement.clientHeight -
+        pageData.height * this.scalingRatio) /
+      2;
     this.pageTop = Math.max(this.pageTop, 0);
 
     // 将组件加个状态标识
     pageData.pages.forEach((page, index) => {
-      page.elements.forEach(e => {
+      page.elements.forEach((e) => {
+        if (e.elName == 'qk-text') {
+          let name = e.commonStyle.fontType.name;
+          let url = e.commonStyle.fontType.content.ttf;
+          //动态加载字体
+          this.loadFont(name, url);
+        }
         e._loaded = index === 0;
       });
     });
@@ -80,17 +91,17 @@ export default {
   mounted() {
     let that = this;
     // 判断翻页类型
-    var direction = this.pageData.flipType === 0 ? "vertical" : "horizontal";
+    var direction = this.pageData.flipType === 0 ? 'vertical' : 'horizontal';
     var showSlideNumber = !!this.pageData.slideNumber;
-    new window.Swiper(".swiper-container", {
+    new window.Swiper('.swiper-container', {
       direction: direction,
       loop: false,
-      pagination: showSlideNumber ? { el: ".swiper-pagination" } : {},
+      pagination: showSlideNumber ? { el: '.swiper-pagination' } : {},
       scrollbar: {
-        el: ".swiper-scrollbar"
+        el: '.swiper-scrollbar'
       },
       on: {
-        slideChange: function() {
+        slideChange: function () {
           that.onSwipe(this.activeIndex);
         }
       }
@@ -99,9 +110,22 @@ export default {
   methods: {
     onSwipe(index) {
       this.activeIndex = index;
-      this.pageData.pages[this.activeIndex].elements.forEach(e => {
+      this.pageData.pages[this.activeIndex].elements.forEach((e) => {
         e._loaded = true;
       });
+    },
+    loadFont(name, url) {
+      //name 字体名称
+      //url  字体链接
+      let style = document.createElement('style');
+      style.type = 'text/css';
+      style.innerText =
+        '@font-face {font-family:' +
+        name +
+        ';src:url(' +
+        url +
+        ')};font-display: swap';
+      document.getElementsByTagName('head')[0].appendChild(style);
     }
   }
 };
@@ -113,11 +137,13 @@ export default {
   width: 100%;
   height: 100%;
 }
-
+.swiper-container {
+  overflow: auto;
+}
 .relative {
   position: relative;
 }
 .hidden {
-  overflow: hidden;
+  /* overflow: hidden; */
 }
 </style>

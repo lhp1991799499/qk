@@ -1,12 +1,12 @@
 <template>
   <div class="container" style="display: block">
     <el-upload
-      action="#"
+      action="http://117.43.10.86:83/poster/upload"
       class="avatar-uploader"
       :show-file-list="false"
       :on-success="handleSuccess"
-      :before-upload="beforeUpload"
     >
+      <!--   :before-upload="beforeUpload"-->
       <el-button type="primary"
         ><i><img src="../../../../../assets/image/icon/uploadi.png" alt="" /></i
         >上传素材</el-button
@@ -16,70 +16,83 @@
 </template>
 
 <script>
-import scrollTabs from "../scroll-tabs.vue";
-import templateContainer from "../template-container.vue";
-import editor from "@client/mixins/editor.js";
+import scrollTabs from '../scroll-tabs.vue';
+import templateContainer from '../template-container.vue';
+import editor from '@client/mixins/editor.js';
 
 export default {
   mixins: [editor],
   components: {
     scrollTabs,
-    templateContainer,
+    templateContainer
   },
   computed: {
     imageUrl() {
-      if (this.value.includes("static")) return this.value;
-      return "resource" + this.value.split("resource")[1];
-    },
+      if (this.value.includes('static')) return this.value;
+      return 'resource' + this.value.split('resource')[1];
+    }
   },
   data() {
     return {
       item: {
-        elName: "qk-image",
-        title: "图片",
-        icon: "iconfont icontupian",
-        valueType: "", // 标识数据类型，用于表单组件,
+        elName: 'qk-image',
+        title: '图片',
+        icon: 'iconfont icontupian',
+        valueType: '', // 标识数据类型，用于表单组件,
         defaultStyle: {
-          height: 200,
-        },
-      },
+          height: 200
+        }
+      }
     };
   },
   methods: {
     handleSuccess(res, file) {
-      if (res.code === 200) {
+      if (res.code === 0) {
         console.log(res);
         // this.$emit("input", res.body.url);
         // this.$emit("uploaded", res.body.url);
         // this.$emit("getPostPath", res.body.url);
-        this.$store.commit("setImgActive", res.body.url);
+        // this.$store.commit("setImgActive", res.url);
         // this.$store.commit("setImgs", {
         //   url: res.body.url,
         //   uuid: this.$store.state.editor.activeImg.uuid,
         // });
-        this.handleClick(this.item);
+
+        let items = {
+          elName: 'qk-image',
+          title: '图片',
+          icon: 'iconfont iconshouyelunbotu',
+          valueType: '', // 标识数据类型，用于表单组件,
+          defaultStyle: {
+            height: res.height,
+            width: res.width
+          }
+        };
+        let props = this.getComponentProps(items.elName);
+        props.imageSrc = res.url;
+        this.$store.dispatch('addElement', { ...items, needProps: props });
       }
     },
     beforeUpload(file) {
       const { type } = this;
-      const ext = file.name.split(".").pop();
-      if (ext === "jpg" || ext === "png" || ext === "gif" || ext === "jpeg") {
+      const ext = file.name.split('.').pop();
+      if (ext === 'jpg' || ext === 'png' || ext === 'gif' || ext === 'jpeg') {
         //return true;
       } else {
-        this.$message({ message: "格式不支持哦!", type: "warning" });
+        this.$message({ message: '格式不支持哦!', type: 'warning' });
         return false;
       }
 
       const params = new FormData();
-      params.append("file", file);
-      params.append("id", String(this.$route.query.id));
+      params.append('file', file);
+      params.append('id', String(this.$route.query.id));
       // console.log(typeof this.$route.query.id)
       this.$API.uploadFile(params).then((res) => {
         this.handleSuccess(res, file);
       });
       return false;
-    },
-  },
+    }
+  }
 };
 </script>
 

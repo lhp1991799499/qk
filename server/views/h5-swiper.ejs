@@ -3,7 +3,7 @@
  * @Author: leaolly
  * @Date: 2023-03-22 09:35:08
  * @LastEditors: Please set LastEditors
- * @LastEditTime: 2023-06-13 14:51:56
+ * @LastEditTime: 2023-08-28 14:37:50
  * @Descripttion: 模块描述
 -->
 <!DOCTYPE html>
@@ -21,6 +21,7 @@
   <meta name="robots" content="index, follow">
   <meta name="format-detection" content="telephone=no">
   <script src="/third-libs/vue.js"></script>
+  <script src="https://cdn.bootcss.com/html2canvas/0.5.0-beta4/html2canvas.min.js"></script>
   <link rel="stylesheet" href="/third-libs/animate.min.css">
   <link rel="stylesheet" href="/third-libs/swiper.min.css">
   <script src="/third-libs/swiper.min.js"></script>
@@ -47,6 +48,7 @@
 
     //var list = ' JSON.parse(decodeURIComponent(' <% -pageData %> '))'
     var data = JSON.parse(decodeURIComponent('<%=pageData %>'))
+    console.log(data);
     // window._pageData = JSON.stringify(data)
     window._pageData = data
     // window._pageData = { "shareConfig": { "coverImage": "", "title": "这是#分享者#的大力推荐", "description": "这是#分享者#大力推荐的H5" }, "title": "未命名场景", "coverImage": "", "description": "我用夸克可视化编辑器做了一个超酷炫的H5，快来看看吧。", "script": "", "width": 375, "height": 644, "pageMode": "h5", "flipType": 0, "slideNumber": false, "status": 1, "isPublish": false, "isTemplate": false, "members": [], "version": 1, "_id": "64880f42138ba72bb023636a", "pages": [{ "uuid": "1129fb5a-e99c-44a4-bbdf-9ad8c9dc7103", "name": "", "elements": [{ "uuid": "92109c30-0fc4-4caf-a856-7647017f5b95", "elName": "qk-text", "animations": [{ "type": "fadeIn", "duration": 1, "infinite": "", "interationCount": 1, "delay": 0 }, { "type": "flash", "duration": 1, "infinite": "", "interationCount": 1, "delay": 0 }, { "type": "fadeOutRight", "duration": 1, "infinite": "", "interationCount": 1, "delay": 0 }], "commonStyle": { "position": "absolute", "width": 375, "height": 40, "top": 200, "left": -2, "rotate": 0, "paddingTop": 0, "paddingLeft": 0, "paddingRight": 0, "paddingBottom": 0, "marginTop": 0, "marginLeft": 0, "marginRight": 0, "marginBottom": 0, "borderWidth": 0, "borderColor": "", "borderStyle": "solid", "borderRadius": 0, "boxShadow": "", "fontSize": 16, "fontWeight": 500, "lineHeight": 1.4, "letterSpacing": 0, "textAlign": "center", "color": "#000000", "backgroundColor": "", "backgroundImage": "", "backgroundSize": "cover", "opacity": 1, "zIndex": 1 }, "events": [], "propsValue": { "text": "这是一段文字" }, "valueType": "String" }], "commonStyle": { "backgroundColor": "", "backgroundImage": "", "backgroundSize": "cover" } }], "author": "6481317a3f419a18187b51e3", "created": "2023-06-13T06:40:02.620Z", "updated": "2023-06-13T06:51:03.562Z", "__v": 0 }
@@ -60,7 +62,57 @@
   </div>
   <script>
     new Vue({
-      el: "#app"
+      el: "#app",
+      mounted () {
+        // console.log(99999);
+        // this.exportPic('app')
+        // this.setTimer()
+      },
+      created () {
+        // this.exportPic('app')
+        // this.setTimer()
+      },
+      methods: {
+        // 导出图片
+        exportPic (DivID) {
+          html2canvas(document.querySelector('#' + DivID), {
+            userCORS: true // 配置 useCORS 为 true，后端也需要做 CORS 对应配置
+          }).then((canvas) => {
+            // userCors:true
+            let dataURL = canvas.toDataURL('image/png');
+            if (dataURL !== '') {
+              var a = document.createElement('a');
+              a.download = '分析报告';
+              a.href = dataURL;
+              console.log(dataURL, 6666);
+              a.click();
+            }
+          });
+        },
+        setTimer () {
+          let index = 0
+          let timer = setInterval(() => {
+            index++
+            const el = document.querySelector('#app')
+            html2canvas(el, {
+              width: 800,
+              height: 800,
+              proxy: '/quark/html2canvas/corsproxy' // 设置跨域接口
+            }).then((canvas) => {
+              let dataURL = canvas.toDataURL('image/jpeg');
+              var a = document.createElement('a');
+              a.download = '测试1';
+              a.href = dataURL;
+              console.log(dataURL, 6666);
+              a.click();
+            });
+            if (index > 20) {
+              clearInterval(timer);
+              timer = null;
+            }
+          }, 67)
+        }
+      }
     })
   </script>
   <script>

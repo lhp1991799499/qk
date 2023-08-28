@@ -2,13 +2,13 @@
   <div class="components-preview">
     <div class="setting-bg"></div>
     <div class="preview-con" v-if="showVideo">
-<!--      <div class="center-panel" :style="style()">-->
+      <!--      <div class="center-panel" :style="style()">-->
       <div class="center-panel" :style="style()">
         <video controls width="500px" height="500px">
           <source :src="videoUrl" type="video/mp4" />
         </video>
       </div>
-      
+
       <span class="close-btn" @click="closePanel">
         <i class="el-icon-close"></i>
       </span>
@@ -18,7 +18,7 @@
 
 <script>
 export default {
-  name: "preview-page",
+  name: 'preview-page',
   props: {
     videoUrl: String,
     showVideo: Boolean,
@@ -36,10 +36,10 @@ export default {
         const { width, height } = this.pageData;
 
         return {
-          width: width/1.5 + "px",
-          height: height/1.5 + "px",
-          "margin-left": '-12%',
-          "margin-top": '-20%'
+          width: width / 1.5 + 'px',
+          height: height / 1.5 + 'px',
+          'margin-left': '-12%',
+          'margin-top': '-20%'
         };
       }
     };
@@ -51,7 +51,7 @@ export default {
   },
   methods: {
     closePanel() {
-      this.$emit("closePanel", false);
+      this.$emit('closePanel', false);
     },
 
     getVideo() {
@@ -59,7 +59,7 @@ export default {
         url: this.videoUrl,
         muted: false,
         loop: false,
-        preload: "auto",
+        preload: 'auto',
         volume: 1,
         autoplay: false
       };
@@ -90,8 +90,8 @@ export default {
   transform: scale(0.8);
   z-index: 1050;
   //overflow: hidden;
-  background-color: #000;
-  border: 0 solid #000;
+  // background-color: #000;
+  // border: 0 solid #000;
 }
 
 .close-btn {
